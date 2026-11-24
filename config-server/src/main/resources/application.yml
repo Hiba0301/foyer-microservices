@@ -1,0 +1,38 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    # native : lit le dossier ../config-repo (pratique pour développer)
+    # git    : lit le dossier config-repo du dépôt GitHub (comme dans le TP) -> CONFIG_PROFILE=git
+    active: ${CONFIG_PROFILE:native}
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: ${CONFIG_REPO_PATH:file:../config-repo/,file:./config-repo/}
+          # ../config-repo si lancé depuis le module (IntelliJ), ./config-repo si lancé depuis la racine
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: git
+  cloud:
+    config:
+      server:
+        git:
+          # ex. https://github.com/Hiba0301/foyer-microservices.git (dépôt public)
+          uri: ${CONFIG_GIT_URI}
+          # les fichiers de configuration sont dans le sous-dossier config-repo du dépôt
+          search-paths: config-repo
+          default-label: ${CONFIG_GIT_LABEL:main}
+          clone-on-start: true
