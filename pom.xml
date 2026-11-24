@@ -25,6 +25,7 @@
         <module>foyer-service</module>
         <module>universite-service</module>
         <module>bloc-service</module>
+        <module>gateway-service</module>
     </modules>
 
     <properties>
