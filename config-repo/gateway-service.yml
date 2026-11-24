@@ -1,0 +1,51 @@
+# =====================================================================
+#  API Gateway : point d'entrée unique (port 8080)
+# =====================================================================
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      # évite l'en-tête CORS en double (gateway + microservice)
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: foyer-service
+          uri: lb://foyer-service          # lb:// = Spring Cloud LoadBalancer + Eureka
+          predicates:
+            - Path=/api/foyers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: foyerRoute
+                fallbackUri: forward:/fallback/foyers
+
+        - id: universite-service
+          uri: lb://universite-service
+          predicates:
+            - Path=/api/universites/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: universiteRoute
+                fallbackUri: forward:/fallback/universites
+
+        - id: bloc-service
+          uri: lb://bloc-service
+          predicates:
+            - Path=/api/blocs/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: blocRoute
+                fallbackUri: forward:/fallback/blocs
+
+# Circuit breaker de la gateway : configuré en Java (GatewayCircuitBreakerConfig) -
+# fenêtre de 10 appels, ouverture à 50 % d'échecs, 10 s ouvert, délai max 30 s par requête.

@@ -1,0 +1,43 @@
+# =====================================================================
+#  foyer-service : gestion des foyers (CRUD repris du projet DevOps) + CQRS/Axon
+#  1re instance : port 8081 ; 2e instance : lancer avec --server.port=8083
+# =====================================================================
+server:
+  port: 8081
+
+spring:
+  datasource:
+    # base indépendante : foyer_db (conteneur mysql-foyer, port 3307)
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/foyer_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      # base inaccessible -> erreur en 3 s (au lieu de 30 s) : utile pour la démo des pannes
+      connection-timeout: 3000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+
+# ---- Axon (CQRS / Event Sourcing) ----
+axon:
+  axonserver:
+    servers: ${AXON_SERVER:localhost:8124}
+  serializer:
+    general: jackson
+    events: jackson
+    messages: jackson
+  eventhandling:
+    processors:
+      foyer-projection:
+        mode: tracking
+
+# ---- Appel vers universite-service (RestTemplate @LoadBalanced) ----
+clients:
+  universite:
+    url: http://universite-service
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

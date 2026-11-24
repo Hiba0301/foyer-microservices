@@ -1,0 +1,62 @@
+# =====================================================================
+#  Configuration COMMUNE à tous les microservices (servie par le Config Server)
+#  Chaque valeur ${VAR:defaut} peut être surchargée par une variable d'environnement
+#  (utile pour Docker : EUREKA_URL, ZIPKIN_URL, DB_HOST...).
+# =====================================================================
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+    registry-fetch-interval-seconds: 5
+  instance:
+    hostname: ${EUREKA_HOSTNAME:localhost}
+    prefer-ip-address: ${EUREKA_PREFER_IP:false}
+    # identifiant lisible dans le dashboard Eureka : foyer-service:8081, foyer-service:8083...
+    instance-id: ${spring.application.name}:${INSTANCE_NAME:${server.port}}
+    # valeurs courtes pour la démo : une instance arrêtée disparaît vite d'Eureka
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+spring:
+  cloud:
+    loadbalancer:
+      # liste des instances gardée 5 s seulement (35 s par défaut)
+      cache:
+        ttl: 5s
+      # une seule politique de nouvelles tentatives : celle de Resilience4j (pas de retry caché du LoadBalancer)
+      retry:
+        enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,refresh,circuitbreakers,circuitbreakerevents,retries,retryevents,ratelimiters,ratelimiterevents
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+  metrics:
+    tags:
+      # étiquette "application" sur toutes les métriques -> filtres Grafana
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  # ---- Traçabilité distribuée (Micrometer Tracing + Zipkin) ----
+  tracing:
+    sampling:
+      probability: 1.0   # 100 % des requêtes tracées (démo)
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411}/api/v2/spans
+
+logging:
+  pattern:
+    # ajoute [application,traceId,spanId] à chaque ligne de log
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
