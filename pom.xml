@@ -21,8 +21,9 @@
 <modules>
     <!-- chaque branche feature ajoute son module ici -->
       <module>config-server</module>
-    <module>eureka-server</module>
-            <module>foyer-service</module>
+      <module>eureka-server</module>
+      <module>foyer-service</module>
+      <module>universite-service</module>
 </modules>
 
     <properties>
