@@ -20,6 +20,8 @@
 
 <modules>
     <!-- chaque branche feature ajoute son module ici -->
+      <module>config-server</module>
+    <module>eureka-server</module>
 </modules>
 
     <properties>
