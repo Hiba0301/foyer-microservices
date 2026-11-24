@@ -22,6 +22,7 @@
     <!-- chaque branche feature ajoute son module ici -->
       <module>config-server</module>
     <module>eureka-server</module>
+            <module>foyer-service</module>
 </modules>
 
     <properties>
@@ -76,6 +77,13 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
+            </dependency>
+                        <!-- Eureka (servo) tire Guava 19 ; gRPC (Axon Server) a besoin de Guava 31 :
+                 sans cette ligne, foyer-service s'arrête au démarrage (NoSuchMethodError) -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.1-jre</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
