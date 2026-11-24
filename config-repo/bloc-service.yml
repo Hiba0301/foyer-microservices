@@ -1,0 +1,76 @@
+# =====================================================================
+#  bloc-service : gestion des blocs (un foyer contient plusieurs blocs)
+#  Appelle foyer-service via OpenFeign, protégé par Resilience4j
+# =====================================================================
+server:
+  port: 8084
+
+spring:
+  datasource:
+    # base indépendante : bloc_db (conteneur mysql-bloc, port 3309)
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3309}/bloc_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      connection-timeout: 3000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+  cloud:
+    openfeign:
+      client:
+        config:
+          foyer-service:
+            connect-timeout: 2000
+            # défaillance "temps de réponse" : au-delà de 5 s l'appel échoue
+            read-timeout: 5000
+            logger-level: basic
+
+# Nom du service appelé par Feign (résolu par Eureka).
+# Même mécanisme que universite-service (démo "URL mal configurée" possible ici aussi).
+clients:
+  foyer:
+    name: foyer-service
+
+# =====================================================================
+#  Résilience : mêmes règles que universite-service
+# =====================================================================
+resilience4j:
+  retry:
+    instances:
+      foyerService:
+        max-attempts: 3              # 1 appel + 2 nouvelles tentatives
+        wait-duration: 500ms         # pause de 500 ms entre deux tentatives
+        ignore-exceptions:           # inutile de réessayer dans ces cas
+          - tn.esprit.blocservice.exceptions.FoyerIntrouvableException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+          - io.github.resilience4j.ratelimiter.RequestNotPermitted
+  ratelimiter:
+    instances:
+      foyerService:
+        limit-for-period: 5          # 5 appels...
+        limit-refresh-period: 1s     # ... par seconde
+        timeout-duration: 0          # au-delà : refus immédiat (pas d'attente)
+        register-health-indicator: true
+  circuitbreaker:
+    instances:
+      foyerService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50           # >= 50 % d'échecs -> circuit OUVERT
+        slow-call-duration-threshold: 3s
+        slow-call-rate-threshold: 80
+        wait-duration-in-open-state: 10s     # puis DEMI-OUVERT
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        ignore-exceptions:
+          - tn.esprit.blocservice.exceptions.FoyerIntrouvableException
+          - io.github.resilience4j.ratelimiter.RequestNotPermitted
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
