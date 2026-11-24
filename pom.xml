@@ -18,7 +18,6 @@
     <name>foyer-microservices</name>
     <description>DS Microservices GL5 : architecture Spring Cloud construite à partir du projet DevOps tpFoyer (module Foyer / Université)</description>
 
-<modules>
     <modules>
         <!-- chaque branche feature ajoute son module ici -->
         <module>config-server</module>
@@ -27,7 +26,6 @@
         <module>universite-service</module>
         <module>bloc-service</module>
     </modules>
-</modules>
 
     <properties>
         <java.version>17</java.version>
