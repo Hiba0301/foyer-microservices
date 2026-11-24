@@ -20,6 +20,7 @@
 
 <modules>
     <!-- chaque branche feature ajoute son module ici -->
+            <module>config-server</module>
 </modules>
 
     <properties>
