@@ -1,0 +1,63 @@
+<div class="page-header">
+  <h1>Universités</h1>
+  <a class="btn btn-primary" routerLink="/universites/nouveau">+ Ajouter une université</a>
+</div>
+
+@if (erreur(); as e) {
+  <div class="alert alert-error" role="alert">{{ e }} <button class="close" (click)="erreur.set(null)">×</button></div>
+}
+@if (succes(); as s) {
+  <div class="alert alert-success" role="status">{{ s }} <button class="close" (click)="succes.set(null)">×</button></div>
+}
+
+@if (chargement()) {
+  <p class="muted">Chargement…</p>
+} @else if (universites().length === 0 && !erreur()) {
+  <p class="muted">Aucune université pour le moment.</p>
+} @else {
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Adresse</th>
+        <th>Foyer</th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (u of universites(); track u.idUniversite) {
+        <tr>
+          <td>{{ u.idUniversite }}</td>
+          <td>{{ u.nomUniversite }}</td>
+          <td>{{ u.adresse }}</td>
+          <td>
+            @if (u.foyer; as foyer) {
+              <span class="badge" [class.badge-degrade]="foyer.disponible === false"
+                    [title]="foyer.disponible === false ? 'Valeur de secours (fallback) : foyer-service indisponible' : ''">
+                {{ foyer.nomFoyer }}
+              </span>
+              <button class="btn btn-small btn-link" (click)="desaffecter(u)">Désaffecter</button>
+            } @else if (foyersLibres().length > 0) {
+              <span class="inline">
+                <select #choix aria-label="Foyer à affecter">
+                  <option value="">— Choisir —</option>
+                  @for (f of foyersLibres(); track f.idFoyer) {
+                    <option [value]="f.idFoyer">{{ f.nomFoyer }}</option>
+                  }
+                </select>
+                <button class="btn btn-small" (click)="affecter(u, choix.value)">Affecter</button>
+              </span>
+            } @else {
+              <span class="muted">Aucun foyer libre</span>
+            }
+          </td>
+          <td class="actions">
+            <a class="btn btn-small" [routerLink]="['/universites', u.idUniversite, 'modifier']">Modifier</a>
+            <button class="btn btn-small btn-danger" (click)="supprimer(u)">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

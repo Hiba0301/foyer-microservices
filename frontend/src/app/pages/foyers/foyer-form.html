@@ -1,0 +1,46 @@
+<div class="page-header">
+  <h1>{{ idFoyer() === null ? 'Ajouter un foyer' : 'Modifier le foyer #' + idFoyer() }}</h1>
+</div>
+
+@if (erreur(); as e) {
+  <div class="alert alert-error" role="alert">{{ e }}</div>
+}
+
+<form class="card form" [formGroup]="form" (ngSubmit)="enregistrer()" novalidate>
+  <label for="nomFoyer">Nom du foyer *</label>
+  <input id="nomFoyer" type="text" formControlName="nomFoyer" [class.invalid]="champInvalide('nomFoyer')" />
+  @if (champInvalide('nomFoyer')) {
+    <small class="error-text">
+      @if (form.controls.nomFoyer.hasError('required')) { Le nom est obligatoire. }
+      @else if (form.controls.nomFoyer.hasError('minlength')) { Au moins 2 caractères. }
+      @else { 100 caractères maximum. }
+    </small>
+  }
+
+  <label for="capaciteFoyer">Capacité *</label>
+  <input id="capaciteFoyer" type="number" min="1" formControlName="capaciteFoyer"
+         [class.invalid]="champInvalide('capaciteFoyer')" />
+  @if (champInvalide('capaciteFoyer')) {
+    <small class="error-text">
+      @if (form.controls.capaciteFoyer.hasError('required')) { La capacité est obligatoire. }
+      @else { La capacité doit être un entier supérieur ou égal à 1. }
+    </small>
+  }
+
+  @if (idFoyer() === null) {
+    <label for="idUniversite">Affecter à une université (optionnel)</label>
+    <select id="idUniversite" formControlName="idUniversite">
+      <option value="">— Aucune —</option>
+      @for (u of universitesSansFoyer(); track u.idUniversite) {
+        <option [value]="u.idUniversite">{{ u.nomUniversite }}</option>
+      }
+    </select>
+  }
+
+  <div class="form-actions">
+    <a class="btn" routerLink="/foyers">Annuler</a>
+    <button class="btn btn-primary" type="submit" [disabled]="envoi()">
+      {{ envoi() ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+  </div>
+</form>

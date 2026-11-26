@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1>{{ idUniversite() === null ? 'Ajouter une université' : "Modifier l'université #" + idUniversite() }}</h1>
+</div>
+
+@if (erreur(); as e) {
+  <div class="alert alert-error" role="alert">{{ e }}</div>
+}
+
+<form class="card form" [formGroup]="form" (ngSubmit)="enregistrer()" novalidate>
+  <label for="nomUniversite">Nom de l'université *</label>
+  <input id="nomUniversite" type="text" formControlName="nomUniversite"
+         [class.invalid]="champInvalide('nomUniversite')" />
+  @if (champInvalide('nomUniversite')) {
+    <small class="error-text">
+      @if (form.controls.nomUniversite.hasError('required')) { Le nom est obligatoire. }
+      @else if (form.controls.nomUniversite.hasError('minlength')) { Au moins 2 caractères. }
+      @else { 100 caractères maximum. }
+    </small>
+  }
+
+  <label for="adresse">Adresse *</label>
+  <input id="adresse" type="text" formControlName="adresse" [class.invalid]="champInvalide('adresse')" />
+  @if (champInvalide('adresse')) {
+    <small class="error-text">
+      @if (form.controls.adresse.hasError('required')) { L'adresse est obligatoire. }
+      @else { 200 caractères maximum. }
+    </small>
+  }
+
+  <div class="form-actions">
+    <a class="btn" routerLink="/universites">Annuler</a>
+    <button class="btn btn-primary" type="submit" [disabled]="envoi()">
+      {{ envoi() ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+  </div>
+</form>
