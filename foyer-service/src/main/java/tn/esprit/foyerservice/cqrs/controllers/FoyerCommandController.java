@@ -17,6 +17,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FoyerCommandController {
 
+    private static final String FOYER_ID = "foyerId";
+    private static final String STATUT = "statut";
+
     private final CommandGateway commandGateway;
 
     @PostMapping
@@ -24,18 +27,23 @@ public class FoyerCommandController {
     public Map<String, String> creer(@RequestBody CreerFoyerRequest request) {
         String foyerId = UUID.randomUUID().toString();
         commandGateway.sendAndWait(new CreerFoyerCommand(foyerId, request.getNomFoyer(), request.getCapaciteFoyer()));
-        return Map.of("foyerId", foyerId, "statut", "commande CreerFoyerCommand traitée");
+        return reponse(foyerId, "CreerFoyerCommand");
     }
 
     @PutMapping("{foyerId}/capacite")
     public Map<String, String> modifierCapacite(@PathVariable String foyerId, @RequestParam long valeur) {
         commandGateway.sendAndWait(new ModifierCapaciteFoyerCommand(foyerId, valeur));
-        return Map.of("foyerId", foyerId, "statut", "commande ModifierCapaciteFoyerCommand traitée");
+        return reponse(foyerId, "ModifierCapaciteFoyerCommand");
     }
 
     @DeleteMapping("{foyerId}")
     public Map<String, String> supprimer(@PathVariable String foyerId) {
         commandGateway.sendAndWait(new SupprimerFoyerCommand(foyerId));
-        return Map.of("foyerId", foyerId, "statut", "commande SupprimerFoyerCommand traitée");
+        return reponse(foyerId, "SupprimerFoyerCommand");
+    }
+
+    /** Même réponse JSON qu'avant : { "foyerId": ..., "statut": "commande ... traitée" }. */
+    private static Map<String, String> reponse(String foyerId, String commande) {
+        return Map.of(FOYER_ID, foyerId, STATUT, "commande " + commande + " traitée");
     }
 }

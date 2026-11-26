@@ -37,6 +37,9 @@
         <!-- même version que le projet DevOps (compatible JDK 17 à 23) -->
         <lombok.version>1.18.36</lombok.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <!-- Couverture Sonar : on ne mesure pas le code de démarrage et de configuration Spring
+             (aucune logique métier, vérifié en lançant les services) -->
+        <sonar.coverage.exclusions>**/*Application.java,**/configurations/**,**/GatewayCircuitBreakerConfig.java</sonar.coverage.exclusions>
     </properties>
 
     <dependencyManagement>
