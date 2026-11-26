@@ -1,0 +1,53 @@
+Issue Id,Parent Id,Issue Type,Summary,Description,Labels
+E1,,Epic,Infrastructure Spring Cloud,"Config Server, Eureka, API Gateway",microservices
+E2,,Epic,Découpage du projet DevOps en microservices,"foyer-service et universite-service, une base par service",microservices
+E3,,Epic,Communication et équilibrage de charge,"OpenFeign, RestTemplate @LoadBalanced, Spring Cloud LoadBalancer",microservices
+E4,,Epic,Résilience et surveillance,"Resilience4j, Micrometer, Prometheus, Grafana, Zipkin",microservices
+E5,,Epic,CQRS avec Axon,"Commandes, événements, agrégat, projection, Axon Server",microservices
+E6,,Epic,Qualité et excellence,"Frontend, Docker Compose, tests, Sonar",microservices
+S1,E1,Story,Créer le Config Server (profil native puis Git),"Branche Git : feature/config-server
+Critère d'acceptation : GET /foyer-service/default renvoie la configuration",microservices
+S2,E1,Story,Centraliser la configuration dans config-repo,"Branche Git : feature/config-server
+Critère d'acceptation : application.yml commun + un fichier par service",microservices
+S3,E1,Story,Créer l'Eureka Server,"Branche Git : feature/eureka-server
+Critère d'acceptation : Dashboard 8761 accessible, services enregistrés",microservices
+S4,E1,Story,Créer l'API Gateway avec routage lb://,"Branche Git : feature/api-gateway
+Critère d'acceptation : /api/foyers/** et /api/universites/** routés",microservices
+S5,E1,Story,Fallback et CORS au niveau de la gateway,"Branche Git : feature/api-gateway
+Critère d'acceptation : 503 propre si un service est absent ; CORS 4200",microservices
+S6,E2,Story,Extraire foyer-service du projet DevOps,"Branche Git : feature/foyer-service
+Critère d'acceptation : CRUD Foyer sur foyer_db, enregistré dans Eureka",microservices
+S7,E2,Story,Extraire universite-service (idFoyer au lieu de @OneToOne),"Branche Git : feature/universite-service-feign
+Critère d'acceptation : CRUD Université sur universite_db",microservices
+S23,E2,Story,Extraire bloc-service avec contrôle de capacité via Feign,"Branche Git : feature/bloc-service
+Critère d'acceptation : affectation refusée (409) si la capacité du foyer est dépassée",microservices
+S8,E3,Story,Client OpenFeign universite-service -> foyer-service,"Branche Git : feature/universite-service-feign
+Critère d'acceptation : Affectation d'un foyer vérifiée via Feign",microservices
+S9,E3,Story,Ajouter-affecter via RestTemplate @LoadBalanced + compensation,"Branche Git : feature/foyer-service
+Critère d'acceptation : Foyer supprimé si universite-service échoue",microservices
+S10,E3,Story,Tester l'équilibrage de charge avec 2 instances,"Branche Git : feature/load-balancing
+Critère d'acceptation : lb-test répartit les appels entre 8081 et 8083",microservices
+S11,E4,Story,Configurer Retry (3 x 500 ms) et Rate Limiter (5/s),"Branche Git : feature/resilience4j
+Critère d'acceptation : Config dans universite-service.yml",microservices
+S12,E4,Story,Configurer le Circuit Breaker et les fallbacks,"Branche Git : feature/resilience4j
+Critère d'acceptation : Foyer dégradé en lecture, 503/429 en écriture",microservices
+S13,E4,Story,Simuler les 5 types de défaillance,"Branche Git : feature/resilience4j
+Critère d'acceptation : Endpoints chaos + scénario documenté",microservices
+S14,E4,Story,Traçabilité distribuée avec Zipkin,"Branche Git : feature/monitoring
+Critère d'acceptation : Trace gateway -> universite -> foyer visible",microservices
+S15,E4,Story,Métriques Prometheus et tableau de bord Grafana,"Branche Git : feature/monitoring
+Critère d'acceptation : Dashboard provisionné, cibles UP",microservices
+S16,E5,Story,Lancer Axon Server dans Docker,"Branche Git : feature/cqrs-axon
+Critère d'acceptation : UI 8024 accessible, foyer-service connecté",microservices
+S17,E5,Story,"Commandes, événements et agrégat FoyerAggregate","Branche Git : feature/cqrs-axon
+Critère d'acceptation : Règles métier dans les @CommandHandler",microservices
+S18,E5,Story,Projection foyer_view et @QueryHandler,"Branche Git : feature/cqrs-axon
+Critère d'acceptation : Lecture via QueryGateway",microservices
+S19,E5,Story,Exposer les API REST commandes / requêtes + historique,"Branche Git : feature/cqrs-axon
+Critère d'acceptation : Endpoints /cqrs/commands et /cqrs/queries",microservices
+S20,E6,Story,Brancher le frontend Angular sur la gateway + page CQRS,"Branche Git : feature/frontend-gateway
+Critère d'acceptation : Toutes les pages passent par 8080",microservices
+S21,E6,Story,Docker Compose de toute l'architecture,"Branche Git : feature/docker-compose
+Critère d'acceptation : docker compose --profile apps up",microservices
+S22,E6,Story,"Tests unitaires (Mockito, Axon Test Fixture) et Sonar","Branche Git : feature/tests-sonar
+Critère d'acceptation : mvn verify vert, analyse Sonar",microservices
