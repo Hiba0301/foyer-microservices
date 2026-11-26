@@ -7,7 +7,6 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import tn.esprit.blocservice.clients.FoyerClient;
 import tn.esprit.blocservice.dto.FoyerDTO;
 import tn.esprit.blocservice.dto.FoyersResultat;
@@ -25,7 +24,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Logique de FoyerRemoteService SANS Spring : validation des réponses (défaillance "réponse incorrecte")
- * et méthodes de fallback (appelées par Resilience4j quand les tentatives ont échoué).
+ * et méthodes de fallback (appelées par Resilience4j quand les tentatives ont échoué ; visibilité "package"
+ * pour pouvoir les tester directement depuis le même package).
  * Les annotations @Retry / @CircuitBreaker / @RateLimiter, elles, sont démontrées par les scénarios de l'étape 7.
  */
 class FoyerRemoteServiceTest {
@@ -102,7 +102,7 @@ class FoyerRemoteServiceTest {
 
     @Test
     void lectureDegradeeQuandFoyerServiceEstEnPanne() {
-        FoyerDTO resultat = ReflectionTestUtils.invokeMethod(service, "foyerDegrade", 1L,
+        FoyerDTO resultat = service.foyerDegrade(1L,
                 new FoyerServiceException("foyer-service a répondu HTTP 500"));
 
         assertNotNull(resultat);
@@ -119,13 +119,12 @@ class FoyerRemoteServiceTest {
         FoyerIntrouvableException introuvable = new FoyerIntrouvableException("404");
 
         assertThrows(FoyerIntrouvableException.class,
-                () -> ReflectionTestUtils.invokeMethod(service, "foyerDegrade", 1L, introuvable));
+                () -> service.foyerDegrade(1L, introuvable));
     }
 
     @Test
     void listeDegradeeQuandFoyerServiceEstEnPanne() {
-        FoyersResultat resultat = ReflectionTestUtils.invokeMethod(service, "foyersDegrades",
-                new ReponseInvalideException("données corrompues"));
+        FoyersResultat resultat = service.foyersDegrades(new ReponseInvalideException("données corrompues"));
 
         assertNotNull(resultat);
         assertFalse(resultat.disponible());
@@ -138,7 +137,7 @@ class FoyerRemoteServiceTest {
         FoyerServiceException panne = new FoyerServiceException("HTTP 503");
 
         ServiceIndisponibleException e = assertThrows(ServiceIndisponibleException.class,
-                () -> ReflectionTestUtils.invokeMethod(service, "verificationImpossible", 7L, panne));
+                () -> service.verificationImpossible(7L, panne));
         assertTrue(e.getMessage().contains("foyer 7"));
     }
 
@@ -147,7 +146,7 @@ class FoyerRemoteServiceTest {
         RequestNotPermitted limite = RequestNotPermitted.createRequestNotPermitted(RateLimiter.ofDefaults("test"));
 
         assertThrows(TropDeRequetesException.class,
-                () -> ReflectionTestUtils.invokeMethod(service, "verificationImpossible", 7L, limite));
+                () -> service.verificationImpossible(7L, limite));
     }
 
     @Test
@@ -155,7 +154,7 @@ class FoyerRemoteServiceTest {
         FoyerIntrouvableException introuvable = new FoyerIntrouvableException("404");
 
         assertThrows(FoyerIntrouvableException.class,
-                () -> ReflectionTestUtils.invokeMethod(service, "verificationImpossible", 7L, introuvable));
+                () -> service.verificationImpossible(7L, introuvable));
     }
 
     // ------------------------------------------------------------ messages de raison

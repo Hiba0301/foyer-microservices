@@ -48,7 +48,8 @@ class BlocServiceTest {
 
     @Test
     void addBlocAvecCapaciteNulleEstRefuse() {
-        assertThrows(IllegalArgumentException.class, () -> blocService.addBloc(new BlocDTO(0, "Bloc A", 0)));
+        BlocDTO capaciteNulle = new BlocDTO(0, "Bloc A", 0);
+        assertThrows(IllegalArgumentException.class, () -> blocService.addBloc(capaciteNulle));
         verify(blocRepository, never()).save(any());
     }
 
