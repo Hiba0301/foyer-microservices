@@ -1,0 +1,20 @@
+# Microservices lancés dans Docker (profil "apps") :
+# les cibles sont découvertes automatiquement dans Eureka (toutes les instances enregistrées).
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: microservices
+    metrics_path: /actuator/prometheus
+    eureka_sd_configs:
+      - server: http://eureka-server:8761/eureka
+        refresh_interval: 10s
+
+  - job_name: eureka-server
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["eureka-server:8761"]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

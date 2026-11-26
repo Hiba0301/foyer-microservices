@@ -1,0 +1,76 @@
+<div class="page-header">
+  <h1>Foyers — CQRS (Axon)</h1>
+</div>
+
+<p class="muted">
+  Les écritures envoient des <strong>commandes</strong> à l'agrégat (événements stockés dans Axon Server) ;
+  le tableau est lu par des <strong>requêtes</strong> sur le modèle de lecture MySQL (<code>foyer_view</code>).
+</p>
+
+@if (erreur(); as e) {
+  <div class="alert alert-error" role="alert">{{ e }} <button class="close" (click)="erreur.set(null)">×</button></div>
+}
+@if (succes(); as s) {
+  <div class="alert alert-success" role="status">{{ s }} <button class="close" (click)="succes.set(null)">×</button></div>
+}
+
+<form class="card form cqrs-form" [formGroup]="form" (ngSubmit)="creer()" novalidate>
+  <label for="nomFoyerCqrs">Nom du foyer *</label>
+  <input id="nomFoyerCqrs" type="text" formControlName="nomFoyer" />
+  <label for="capaciteFoyerCqrs">Capacité *</label>
+  <input id="capaciteFoyerCqrs" type="number" min="1" formControlName="capaciteFoyer" />
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Envoyer CreerFoyerCommand</button>
+  </div>
+</form>
+
+@if (chargement()) {
+  <p class="muted">Chargement…</p>
+} @else if (foyers().length === 0 && !erreur()) {
+  <p class="muted">Aucun foyer dans le modèle de lecture.</p>
+} @else {
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Capacité</th>
+        <th>Modifications</th>
+        <th>Dernière modification</th>
+        <th class="actions">Commandes</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (f of foyers(); track f.foyerId) {
+        <tr>
+          <td>{{ f.nomFoyer }}<br /><small class="muted">{{ f.foyerId }}</small></td>
+          <td>{{ f.capaciteFoyer }}</td>
+          <td>{{ f.nombreModifications }}</td>
+          <td>{{ f.derniereModification | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+          <td class="actions">
+            <span class="inline">
+              <input #capacite class="input-small" type="number" min="1" [value]="f.capaciteFoyer" aria-label="Nouvelle capacité" />
+              <button class="btn btn-small" (click)="modifier(f, capacite.value)">Modifier capacité</button>
+              <button class="btn btn-small" (click)="afficherHistorique(f)">Événements</button>
+              <button class="btn btn-small btn-danger" (click)="supprimer(f)">Supprimer</button>
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+@if (foyerSelectionne(); as f) {
+  <section class="card historique">
+    <h2>Event store — {{ f.nomFoyer }}</h2>
+    <ol>
+      @for (e of evenements(); track e.sequence) {
+        <li>
+          <span class="badge">#{{ e.sequence }} {{ e.type }}</span>
+          <small class="muted">{{ e.date | date: 'dd/MM/yyyy HH:mm:ss' }}</small>
+          <code>{{ e.donnees | json }}</code>
+        </li>
+      }
+    </ol>
+  </section>
+}

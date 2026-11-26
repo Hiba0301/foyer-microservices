@@ -1,0 +1,8 @@
+# =====================================================================
+#  Profil optionnel "eventstore-mysql" (variante du TP CQRS) :
+#  les événements sont stockés dans MySQL (table domain_event_entry) au lieu d'Axon Server.
+#  Lancer foyer-service avec : --spring.profiles.active=eventstore-mysql
+# =====================================================================
+axon:
+  axonserver:
+    enabled: false

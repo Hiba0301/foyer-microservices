@@ -1,0 +1,49 @@
+<div class="page-header">
+  <h1>Foyers</h1>
+  <a class="btn btn-primary" routerLink="/foyers/nouveau">+ Ajouter un foyer</a>
+</div>
+
+@if (erreur(); as e) {
+  <div class="alert alert-error" role="alert">{{ e }} <button class="close" (click)="erreur.set(null)">×</button></div>
+}
+@if (succes(); as s) {
+  <div class="alert alert-success" role="status">{{ s }} <button class="close" (click)="succes.set(null)">×</button></div>
+}
+
+@if (chargement()) {
+  <p class="muted">Chargement…</p>
+} @else if (foyers().length === 0 && !erreur()) {
+  <p class="muted">Aucun foyer pour le moment.</p>
+} @else {
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Capacité</th>
+        <th>Université</th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (foyer of foyers(); track foyer.idFoyer) {
+        <tr>
+          <td>{{ foyer.idFoyer }}</td>
+          <td>{{ foyer.nomFoyer }}</td>
+          <td>{{ foyer.capaciteFoyer }}</td>
+          <td>
+            @if (universiteParFoyer().get(foyer.idFoyer!); as nom) {
+              <span class="badge">{{ nom }}</span>
+            } @else {
+              <span class="muted">Non affecté</span>
+            }
+          </td>
+          <td class="actions">
+            <a class="btn btn-small" [routerLink]="['/foyers', foyer.idFoyer, 'modifier']">Modifier</a>
+            <button class="btn btn-small btn-danger" (click)="supprimer(foyer)">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

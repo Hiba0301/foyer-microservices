@@ -1,0 +1,950 @@
+{
+  "info": {
+    "name": "DS Microservices — Foyer / Université",
+    "_postman_id": "83b40b3e-3988-4178-be77-40552cbf8eae",
+    "description": "Scénario de démonstration : Config Server, Eureka, API Gateway, OpenFeign, Resilience4j, Load Balancing, CQRS/Axon.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gateway",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "config",
+      "value": "http://localhost:8888"
+    },
+    {
+      "key": "eureka",
+      "value": "http://localhost:8761"
+    },
+    {
+      "key": "foyer1",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "foyer2",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "universite",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "foyerId",
+      "value": ""
+    },
+    {
+      "key": "bloc",
+      "value": "http://localhost:8084"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Infrastructure",
+      "item": [
+        {
+          "name": "Config Server : config de foyer-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{config}}/foyer-service/default"
+            }
+          }
+        },
+        {
+          "name": "Config Server : config de universite-service (resilience4j)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{config}}/universite-service/default"
+            }
+          }
+        },
+        {
+          "name": "Eureka : services enregistrés (JSON)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{eureka}}/eureka/apps"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Foyers (via API Gateway)",
+      "item": [
+        {
+          "name": "Ajouter Foyer El Amal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomFoyer\": \"Foyer El Amal\",\n  \"capaciteFoyer\": 300\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ajouter Foyer Ibn Khaldoun",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomFoyer\": \"Foyer Ibn Khaldoun\",\n  \"capaciteFoyer\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les foyers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/getAll"
+            }
+          }
+        },
+        {
+          "name": "Foyer par id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/get?idFoyer=1"
+            }
+          }
+        },
+        {
+          "name": "Modifier un foyer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/update"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idFoyer\": 1,\n  \"nomFoyer\": \"Foyer El Amal\",\n  \"capaciteFoyer\": 350\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Universités + communication Feign / RestTemplate",
+      "item": [
+        {
+          "name": "Ajouter ESPRIT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/universites/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomUniversite\": \"ESPRIT\",\n  \"adresse\": \"Ariana\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ajouter FST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/universites/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomUniversite\": \"FST\",\n  \"adresse\": \"Tunis\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Affecter le foyer 1 à ESPRIT (Feign -> foyer-service)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
+            },
+            "description": "universite-service vérifie le foyer dans foyer-service (OpenFeign + Resilience4j) avant d'enregistrer idFoyer."
+          }
+        },
+        {
+          "name": "Lister les universités (foyer lu via Feign)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/getAll"
+            }
+          }
+        },
+        {
+          "name": "Université par id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+            }
+          }
+        },
+        {
+          "name": "Affecter un foyer inexistant (404)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=999&nomUniversite=FST"
+            }
+          }
+        },
+        {
+          "name": "Ajouter un foyer et l'affecter à FST (RestTemplate -> universite-service)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/ajouter-affecter?idUniversite=2"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomFoyer\": \"Foyer Bardo\",\n  \"capaciteFoyer\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "foyer-service enregistre le foyer puis appelle universite-service avec un RestTemplate @LoadBalanced. En cas d'échec, le foyer est supprimé (compensation)."
+          }
+        },
+        {
+          "name": "Désaffecter le foyer d'ESPRIT",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/desaffecter-foyer-universite?idUniversite=1"
+            }
+          }
+        },
+        {
+          "name": "Réaffecter le foyer 1 à ESPRIT",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2b. Blocs (bloc-service -> foyer-service via Feign)",
+      "description": "Prérequis : le foyer 1 (capacité 350) existe.",
+      "item": [
+        {
+          "name": "Ajouter Bloc A (150)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomBloc\": \"Bloc A\",\n  \"capaciteBloc\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ajouter Bloc B (150)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomBloc\": \"Bloc B\",\n  \"capaciteBloc\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ajouter Bloc C (100)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/add"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomBloc\": \"Bloc C\",\n  \"capaciteBloc\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Affecter Bloc A au foyer 1",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=1&idFoyer=1"
+            }
+          }
+        },
+        {
+          "name": "Affecter Bloc B au foyer 1",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=2&idFoyer=1"
+            }
+          }
+        },
+        {
+          "name": "Affecter Bloc C au foyer 1 -> 409 capacité dépassée",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=3&idFoyer=1"
+            },
+            "description": "150 + 150 déjà occupés + 100 > 350 : règle métier vérifiée grâce à la capacité lue dans foyer-service."
+          }
+        },
+        {
+          "name": "Blocs du foyer 1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/par-foyer/1"
+            }
+          }
+        },
+        {
+          "name": "Lister les blocs (foyer lu via Feign)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/getAll"
+            }
+          }
+        },
+        {
+          "name": "Modifier Bloc A",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/update"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idBloc\": 1,\n  \"nomBloc\": \"Bloc A\",\n  \"capaciteBloc\": 180\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Désaffecter Bloc B",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/desaffecter-bloc-foyer?idBloc=2"
+            }
+          }
+        },
+        {
+          "name": "Résilience : bloc 1 pendant une panne de foyer-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/blocs/get?idBloc=1"
+            },
+            "description": "Arrêter foyer-service : le bloc est renvoyé avec un foyer en mode dégradé."
+          }
+        },
+        {
+          "name": "État du circuit breaker de bloc-service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{bloc}}/actuator/circuitbreakers"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Équilibrage de charge (2 instances de foyer-service)",
+      "item": [
+        {
+          "name": "10 appels Feign : répartition entre 8081 et 8083",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/lb-test?appels=10"
+            }
+          }
+        },
+        {
+          "name": "Instance qui répond via la gateway (relancer plusieurs fois)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/instance"
+            }
+          }
+        }
+      ],
+      "description": "Lancer foyer-service une 2e fois avec --server.port=8083 avant ces requêtes."
+    },
+    {
+      "name": "4. Résilience : 5 types de défaillance",
+      "item": [
+        {
+          "name": "[Témoin] Université 1 avec son foyer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+            }
+          }
+        },
+        {
+          "name": "4.1 Disponibilité : arrêter foyer-service",
+          "item": [
+            {
+              "name": "Université 1 -> foyer en mode dégradé",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                },
+                "description": "Arrêter les instances de foyer-service, puis relancer cette requête 3 ou 4 fois : retry, puis circuit ouvert."
+              }
+            },
+            {
+              "name": "Affecter pendant la panne -> 503 propre",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
+                }
+              }
+            },
+            {
+              "name": "Gateway : route foyers -> fallback de la gateway (503)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/foyers/getAll"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.2 Temps de réponse : latence de 6 s",
+          "item": [
+            {
+              "name": "Activer 6 s de latence (instance 8081)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/api/foyers/chaos?latenceMs=6000"
+                }
+              }
+            },
+            {
+              "name": "Activer 6 s de latence (instance 8083)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer2}}/api/foyers/chaos?latenceMs=6000"
+                }
+              }
+            },
+            {
+              "name": "Université 1 -> délai dépassé (> 5 s) puis fallback",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                }
+              }
+            },
+            {
+              "name": "Désactiver (8081)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/api/foyers/chaos"
+                }
+              }
+            },
+            {
+              "name": "Désactiver (8083)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer2}}/api/foyers/chaos"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.3 Réponses incorrectes : données corrompues",
+          "item": [
+            {
+              "name": "Activer les réponses corrompues (8081)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/api/foyers/chaos?corrompre=true"
+                }
+              }
+            },
+            {
+              "name": "Activer les réponses corrompues (8083)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer2}}/api/foyers/chaos?corrompre=true"
+                }
+              }
+            },
+            {
+              "name": "Voir la réponse corrompue de foyer-service",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/api/foyers/get?idFoyer=1"
+                }
+              }
+            },
+            {
+              "name": "Université 1 -> réponse refusée, fallback",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                }
+              }
+            },
+            {
+              "name": "Désactiver (8081)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/api/foyers/chaos"
+                }
+              }
+            },
+            {
+              "name": "Désactiver (8083)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer2}}/api/foyers/chaos"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.4 Erreur réseau : URL mal configurée",
+          "item": [
+            {
+              "name": "Vérifier clients.foyer.name dans le Config Server",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{config}}/universite-service/default"
+                },
+                "description": "Mettre clients.foyer.name: foyer-servise dans config-repo/universite-service.yml, redémarrer universite-service, puis lancer la requête suivante. Remettre foyer-service ensuite."
+              }
+            },
+            {
+              "name": "Université 1 -> service introuvable, fallback",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.5 Dépendance externe : base MySQL de foyer-service arrêtée",
+          "item": [
+            {
+              "name": "Université 1 -> foyer-service renvoie 500, fallback",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                },
+                "description": "docker stop mysql-foyer, puis cette requête. docker start mysql-foyer ensuite."
+              }
+            },
+            {
+              "name": "Santé de foyer-service (db DOWN)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{foyer1}}/actuator/health"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.6 Rate limiter : 5 requêtes / s",
+          "item": [
+            {
+              "name": "Université 1 (lancer avec le Runner : 10 itérations, délai 0)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
+                },
+                "description": "Au-delà de 5 appels dans la même seconde, le foyer affiché indique « limite de 5 requêtes/s atteinte ». Voir aussi scripts/demo-rate-limiter.sh"
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.7 Observer Resilience4j (Actuator)",
+          "item": [
+            {
+              "name": "État des circuit breakers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/circuitbreakers"
+                }
+              }
+            },
+            {
+              "name": "Événements du circuit breaker",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/circuitbreakerevents"
+                }
+              }
+            },
+            {
+              "name": "Retries",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/retryevents"
+                }
+              }
+            },
+            {
+              "name": "Rate limiters",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/ratelimiters"
+                }
+              }
+            },
+            {
+              "name": "Santé (inclut circuit breaker et rate limiter)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/health"
+                }
+              }
+            },
+            {
+              "name": "Métriques Prometheus",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{universite}}/actuator/prometheus"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. CQRS avec Axon",
+      "item": [
+        {
+          "name": "Commande : créer un foyer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/commands"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomFoyer\": \"Foyer CQRS Ennasr\",\n  \"capaciteFoyer\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('foyerId', pm.response.json().foyerId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Requête : tous les foyers (modèle de lecture)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/queries"
+            }
+          }
+        },
+        {
+          "name": "Requête : foyer par id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}"
+            }
+          }
+        },
+        {
+          "name": "Commande : modifier la capacité",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=180"
+            }
+          }
+        },
+        {
+          "name": "Commande refusée : capacité négative (400)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=-3"
+            }
+          }
+        },
+        {
+          "name": "Requête : capacité >= 150",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/queries?capaciteMin=150"
+            }
+          }
+        },
+        {
+          "name": "Event store : historique du foyer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}/evenements"
+            }
+          }
+        },
+        {
+          "name": "Commande : supprimer",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}"
+            }
+          }
+        },
+        {
+          "name": "Commande refusée : agrégat supprimé",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=200"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
