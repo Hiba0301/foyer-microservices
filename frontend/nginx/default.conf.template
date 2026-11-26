@@ -1,0 +1,31 @@
+# Template traité au démarrage par l'image officielle nginx (envsubst) :
+# seule ${BACKEND_HOST} est remplacée (voir NGINX_ENVSUBST_FILTER dans le Dockerfile),
+# les variables nginx comme $uri restent intactes.
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Appels API : relayés vers l'API Gateway (même origine => pas de CORS)
+    location /api/ {
+        proxy_pass http://${BACKEND_HOST}:8080;
+        # $http_host garde le port (ex. :30001) : sinon Spring croit à une requête cross-origin et renvoie 403
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Routing Angular : toute URL inconnue renvoie index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache long pour les fichiers versionnés (hash dans le nom)
+    location ~* \.(js|css|ico|png|svg|woff2?)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+}
