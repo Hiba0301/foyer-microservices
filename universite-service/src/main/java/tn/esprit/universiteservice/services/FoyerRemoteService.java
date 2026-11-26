@@ -70,8 +70,10 @@ public class FoyerRemoteService {
     }
 
     // ------------------------------------------------------------------ Fallbacks
+    // Visibilité "package" (et non private) : ces méthodes ne sont appelées que par Resilience4j
+    // (attribut fallbackMethod, par réflexion) ; un analyseur statique les croirait inutilisées si elles étaient privées.
 
-    private FoyerDTO foyerDegrade(long idFoyer, Throwable cause) {
+    FoyerDTO foyerDegrade(long idFoyer, Throwable cause) {
         if (cause instanceof FoyerIntrouvableException introuvable) {
             throw introuvable; // erreur métier : pas de mode dégradé
         }
@@ -79,12 +81,12 @@ public class FoyerRemoteService {
         return FoyerDTO.indisponible(idFoyer, raison(cause));
     }
 
-    private FoyersResultat foyersDegrades(Throwable cause) {
+    FoyersResultat foyersDegrades(Throwable cause) {
         enregistrerFallback("getAllFoyers", cause);
         return FoyersResultat.indisponibles(raison(cause));
     }
 
-    private FoyerDTO verificationImpossible(long idFoyer, Throwable cause) {
+    FoyerDTO verificationImpossible(long idFoyer, Throwable cause) {
         if (cause instanceof FoyerIntrouvableException introuvable) {
             throw introuvable;
         }
@@ -108,7 +110,7 @@ public class FoyerRemoteService {
 
     private void enregistrerFallback(String methode, Throwable cause) {
         log.warn("FALLBACK {} -> {} : {}", methode, cause.getClass().getSimpleName(), cause.getMessage());
-        // métrique visible dans Prometheus/Grafana : foyer_fallback_total{methode,cause}
+        // métrique Prometheus foyer_fallback_total, étiquetée par méthode et par cause (tableau de bord Grafana)
         meterRegistry.counter("foyer.fallback", "methode", methode, "cause", cause.getClass().getSimpleName()).increment();
     }
 
