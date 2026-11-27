@@ -48,9 +48,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{config}}/foyer-service/default"
-            }
+            "url": "{{config}}/foyer-service/default"
           }
         },
         {
@@ -58,9 +56,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{config}}/universite-service/default"
-            }
+            "url": "{{config}}/universite-service/default"
           }
         },
         {
@@ -68,9 +64,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{eureka}}/eureka/apps"
-            }
+            "url": "{{eureka}}/eureka/apps"
           }
         }
       ]
@@ -88,9 +82,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/add"
-            },
+            "url": "{{gateway}}/api/foyers/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomFoyer\": \"Foyer El Amal\",\n  \"capaciteFoyer\": 300\n}",
@@ -112,9 +104,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/add"
-            },
+            "url": "{{gateway}}/api/foyers/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomFoyer\": \"Foyer Ibn Khaldoun\",\n  \"capaciteFoyer\": 200\n}",
@@ -131,9 +121,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/getAll"
-            }
+            "url": "{{gateway}}/api/foyers/getAll"
           }
         },
         {
@@ -141,9 +129,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/get?idFoyer=1"
-            }
+            "url": "{{gateway}}/api/foyers/get?idFoyer=1"
           }
         },
         {
@@ -156,9 +142,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/update"
-            },
+            "url": "{{gateway}}/api/foyers/update",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"idFoyer\": 1,\n  \"nomFoyer\": \"Foyer El Amal\",\n  \"capaciteFoyer\": 350\n}",
@@ -185,9 +169,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/universites/add"
-            },
+            "url": "{{gateway}}/api/universites/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomUniversite\": \"ESPRIT\",\n  \"adresse\": \"Ariana\"\n}",
@@ -209,9 +191,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/universites/add"
-            },
+            "url": "{{gateway}}/api/universites/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomUniversite\": \"FST\",\n  \"adresse\": \"Tunis\"\n}",
@@ -228,9 +208,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
-            },
+            "url": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT",
             "description": "universite-service vérifie le foyer dans foyer-service (OpenFeign + Resilience4j) avant d'enregistrer idFoyer."
           }
         },
@@ -239,9 +217,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/getAll"
-            }
+            "url": "{{gateway}}/api/universites/getAll"
           }
         },
         {
@@ -249,9 +225,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-            }
+            "url": "{{gateway}}/api/universites/get?idUniversite=1"
           }
         },
         {
@@ -259,9 +233,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=999&nomUniversite=FST"
-            }
+            "url": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=999&nomUniversite=FST"
           }
         },
         {
@@ -274,9 +246,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/ajouter-affecter?idUniversite=2"
-            },
+            "url": "{{gateway}}/api/foyers/ajouter-affecter?idUniversite=2",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomFoyer\": \"Foyer Bardo\",\n  \"capaciteFoyer\": 150\n}",
@@ -294,9 +264,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/desaffecter-foyer-universite?idUniversite=1"
-            }
+            "url": "{{gateway}}/api/universites/desaffecter-foyer-universite?idUniversite=1"
           }
         },
         {
@@ -304,9 +272,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
-            }
+            "url": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
           }
         }
       ]
@@ -325,9 +291,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/add"
-            },
+            "url": "{{gateway}}/api/blocs/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomBloc\": \"Bloc A\",\n  \"capaciteBloc\": 150\n}",
@@ -349,9 +313,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/add"
-            },
+            "url": "{{gateway}}/api/blocs/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomBloc\": \"Bloc B\",\n  \"capaciteBloc\": 150\n}",
@@ -373,9 +335,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/add"
-            },
+            "url": "{{gateway}}/api/blocs/add",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomBloc\": \"Bloc C\",\n  \"capaciteBloc\": 100\n}",
@@ -392,9 +352,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=1&idFoyer=1"
-            }
+            "url": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=1&idFoyer=1"
           }
         },
         {
@@ -402,9 +360,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=2&idFoyer=1"
-            }
+            "url": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=2&idFoyer=1"
           }
         },
         {
@@ -412,9 +368,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=3&idFoyer=1"
-            },
+            "url": "{{gateway}}/api/blocs/affecter-bloc-foyer?idBloc=3&idFoyer=1",
             "description": "150 + 150 déjà occupés + 100 > 350 : règle métier vérifiée grâce à la capacité lue dans foyer-service."
           }
         },
@@ -423,9 +377,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/par-foyer/1"
-            }
+            "url": "{{gateway}}/api/blocs/par-foyer/1"
           }
         },
         {
@@ -433,9 +385,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/getAll"
-            }
+            "url": "{{gateway}}/api/blocs/getAll"
           }
         },
         {
@@ -448,9 +398,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/update"
-            },
+            "url": "{{gateway}}/api/blocs/update",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"idBloc\": 1,\n  \"nomBloc\": \"Bloc A\",\n  \"capaciteBloc\": 180\n}",
@@ -467,9 +415,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/desaffecter-bloc-foyer?idBloc=2"
-            }
+            "url": "{{gateway}}/api/blocs/desaffecter-bloc-foyer?idBloc=2"
           }
         },
         {
@@ -477,9 +423,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/blocs/get?idBloc=1"
-            },
+            "url": "{{gateway}}/api/blocs/get?idBloc=1",
             "description": "Arrêter foyer-service : le bloc est renvoyé avec un foyer en mode dégradé."
           }
         },
@@ -488,9 +432,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{bloc}}/actuator/circuitbreakers"
-            }
+            "url": "{{bloc}}/actuator/circuitbreakers"
           }
         }
       ]
@@ -503,9 +445,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/lb-test?appels=10"
-            }
+            "url": "{{gateway}}/api/universites/lb-test?appels=10"
           }
         },
         {
@@ -513,9 +453,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/instance"
-            }
+            "url": "{{gateway}}/api/foyers/instance"
           }
         }
       ],
@@ -529,9 +467,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-            }
+            "url": "{{gateway}}/api/universites/get?idUniversite=1"
           }
         },
         {
@@ -542,9 +478,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                },
+                "url": "{{gateway}}/api/universites/get?idUniversite=1",
                 "description": "Arrêter les instances de foyer-service, puis relancer cette requête 3 ou 4 fois : retry, puis circuit ouvert."
               }
             },
@@ -553,9 +487,7 @@
               "request": {
                 "method": "PUT",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
-                }
+                "url": "{{gateway}}/api/universites/affecter-foyer-universite?idFoyer=1&nomUniversite=ESPRIT"
               }
             },
             {
@@ -563,9 +495,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/foyers/getAll"
-                }
+                "url": "{{gateway}}/api/foyers/getAll"
               }
             }
           ]
@@ -578,9 +508,7 @@
               "request": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/api/foyers/chaos?latenceMs=6000"
-                }
+                "url": "{{foyer1}}/api/foyers/chaos?latenceMs=6000"
               }
             },
             {
@@ -588,9 +516,7 @@
               "request": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer2}}/api/foyers/chaos?latenceMs=6000"
-                }
+                "url": "{{foyer2}}/api/foyers/chaos?latenceMs=6000"
               }
             },
             {
@@ -598,9 +524,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                }
+                "url": "{{gateway}}/api/universites/get?idUniversite=1"
               }
             },
             {
@@ -608,9 +532,7 @@
               "request": {
                 "method": "DELETE",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/api/foyers/chaos"
-                }
+                "url": "{{foyer1}}/api/foyers/chaos"
               }
             },
             {
@@ -618,9 +540,7 @@
               "request": {
                 "method": "DELETE",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer2}}/api/foyers/chaos"
-                }
+                "url": "{{foyer2}}/api/foyers/chaos"
               }
             }
           ]
@@ -633,9 +553,7 @@
               "request": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/api/foyers/chaos?corrompre=true"
-                }
+                "url": "{{foyer1}}/api/foyers/chaos?corrompre=true"
               }
             },
             {
@@ -643,9 +561,7 @@
               "request": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer2}}/api/foyers/chaos?corrompre=true"
-                }
+                "url": "{{foyer2}}/api/foyers/chaos?corrompre=true"
               }
             },
             {
@@ -653,9 +569,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/api/foyers/get?idFoyer=1"
-                }
+                "url": "{{foyer1}}/api/foyers/get?idFoyer=1"
               }
             },
             {
@@ -663,9 +577,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                }
+                "url": "{{gateway}}/api/universites/get?idUniversite=1"
               }
             },
             {
@@ -673,9 +585,7 @@
               "request": {
                 "method": "DELETE",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/api/foyers/chaos"
-                }
+                "url": "{{foyer1}}/api/foyers/chaos"
               }
             },
             {
@@ -683,9 +593,7 @@
               "request": {
                 "method": "DELETE",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer2}}/api/foyers/chaos"
-                }
+                "url": "{{foyer2}}/api/foyers/chaos"
               }
             }
           ]
@@ -698,9 +606,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{config}}/universite-service/default"
-                },
+                "url": "{{config}}/universite-service/default",
                 "description": "Mettre clients.foyer.name: foyer-servise dans config-repo/universite-service.yml, redémarrer universite-service, puis lancer la requête suivante. Remettre foyer-service ensuite."
               }
             },
@@ -709,9 +615,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                }
+                "url": "{{gateway}}/api/universites/get?idUniversite=1"
               }
             }
           ]
@@ -724,9 +628,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                },
+                "url": "{{gateway}}/api/universites/get?idUniversite=1",
                 "description": "docker stop mysql-foyer, puis cette requête. docker start mysql-foyer ensuite."
               }
             },
@@ -735,9 +637,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{foyer1}}/actuator/health"
-                }
+                "url": "{{foyer1}}/actuator/health"
               }
             }
           ]
@@ -750,9 +650,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{gateway}}/api/universites/get?idUniversite=1"
-                },
+                "url": "{{gateway}}/api/universites/get?idUniversite=1",
                 "description": "Au-delà de 5 appels dans la même seconde, le foyer affiché indique « limite de 5 requêtes/s atteinte ». Voir aussi scripts/demo-rate-limiter.sh"
               }
             }
@@ -766,9 +664,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/circuitbreakers"
-                }
+                "url": "{{universite}}/actuator/circuitbreakers"
               }
             },
             {
@@ -776,9 +672,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/circuitbreakerevents"
-                }
+                "url": "{{universite}}/actuator/circuitbreakerevents"
               }
             },
             {
@@ -786,9 +680,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/retryevents"
-                }
+                "url": "{{universite}}/actuator/retryevents"
               }
             },
             {
@@ -796,9 +688,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/ratelimiters"
-                }
+                "url": "{{universite}}/actuator/ratelimiters"
               }
             },
             {
@@ -806,9 +696,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/health"
-                }
+                "url": "{{universite}}/actuator/health"
               }
             },
             {
@@ -816,9 +704,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": {
-                  "raw": "{{universite}}/actuator/prometheus"
-                }
+                "url": "{{universite}}/actuator/prometheus"
               }
             }
           ]
@@ -838,9 +724,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/commands"
-            },
+            "url": "{{gateway}}/api/foyers/cqrs/commands",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nomFoyer\": \"Foyer CQRS Ennasr\",\n  \"capaciteFoyer\": 120\n}",
@@ -869,9 +753,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/queries"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/queries"
           }
         },
         {
@@ -879,9 +761,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}"
           }
         },
         {
@@ -889,9 +769,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=180"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=180"
           }
         },
         {
@@ -899,9 +777,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=-3"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=-3"
           }
         },
         {
@@ -909,9 +785,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/queries?capaciteMin=150"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/queries?capaciteMin=150"
           }
         },
         {
@@ -919,9 +793,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}/evenements"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/queries/{{foyerId}}/evenements"
           }
         },
         {
@@ -929,9 +801,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}"
           }
         },
         {
@@ -939,9 +809,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "url": {
-              "raw": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=200"
-            }
+            "url": "{{gateway}}/api/foyers/cqrs/commands/{{foyerId}}/capacite?valeur=200"
           }
         }
       ]
