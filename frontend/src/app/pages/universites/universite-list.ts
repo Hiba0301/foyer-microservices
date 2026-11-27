@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { Foyer } from '../../models/foyer';
 import { Universite } from '../../models/universite';
 import { FoyerService } from '../../services/foyer.service';
@@ -34,7 +34,10 @@ export class UniversiteList implements OnInit {
 
   charger(): void {
     this.chargement.set(true);
-    forkJoin({ universites: this.universiteService.getAll(), foyers: this.foyerService.getAll() }).subscribe({
+    // Si foyer-service est indisponible, la liste des foyers libres reste vide, mais les universités
+    // s'affichent quand même, avec le badge « dégradé » renvoyé par le fallback d'universite-service.
+    const foyers$ = this.foyerService.getAll().pipe(catchError(() => of([] as Foyer[])));
+    forkJoin({ universites: this.universiteService.getAll(), foyers: foyers$ }).subscribe({
       next: ({ universites, foyers }) => {
         this.universites.set(universites);
         this.foyers.set(foyers);
